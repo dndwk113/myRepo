@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+	PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+			"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+	<mapper namespace="com.todolist.mapper.TodoMapper">
+	
+	<select id="getList" resultType="com.todolist.domain.TodoVO">
+			<![CDATA[
+			 select *  
+			 from todolist 
+			 where bno > 0
+			 order by d_day
+			]]>
+	</select>
+	
+	<!-- 새 글 작성시 제출 sql문[글번호 자동] -->
+	<insert id="insert">
+			insert into todolist (bno,importance, priorty, mngcode, d_day, title, content, writer)
+			values (seq_todolist.nextval, #{importance}, #{priorty}, #{mngcode}, #{d_day}, #{title}, #{content}, #{writer})
+	</insert>
+	
+	<!-- 새글 작성시에 쓰이는 bno번호의 관리[글번호 수동]. bno가 2씩 넘어가고 있다. 왜지??-->
+	<insert id="insertSelectKey">
+		<selectKey keyProperty="bno" order="BEFORE" resultType="long">
+		 select seq_todolist.nextval from dual
+		</selectKey>
+		insert into todolist (bno,importance, priorty, mngcode, d_day, title, content, writer)
+			values (#{bno}, #{importance}, #{priorty}, #{mngcode}, #{d_day}, #{title}, #{content}, #{writer})
+	</insert>
+	
+	<select id="read" resultType="com.todolist.domain.TodoVO">
+		select * from todolist where bno = #{bno}
+	</select>	
+
+	<delete id="delete">
+		delete todolist where bno = #{bno}
+	</delete>
+
+	<update id="update">
+	update todolist
+	set 
+		importance = #{importance},
+		priorty		=#{priorty},
+		mngcode		=#{mngcode},
+		d_day		=#{d_day},
+		title		=#{title},
+		content		=#{content},
+		writer		=#{writer},
+		updateDate	=sysdate
+			
+	where bno =#{bno}
+	</update>
+
+	
+
+
+	</mapper>
